@@ -8,6 +8,7 @@ from routes.blog import blog_bp
 from routes.contact import contact_bp
 from routes.portfolio import portfolio_bp
 from routes.auth import auth_bp
+from routes.upload import upload_bp
 
 def register_blueprints(app: Flask):
     """Register all API blueprints with the Flask app"""
@@ -19,6 +20,7 @@ def register_blueprints(app: Flask):
     app.register_blueprint(blog_bp)
     app.register_blueprint(contact_bp)
     app.register_blueprint(portfolio_bp)
+    app.register_blueprint(upload_bp)
     
     # Add a general API info route
     @app.route('/api')
@@ -35,6 +37,7 @@ def register_blueprints(app: Flask):
                 'blog': '/api/blog',
                 'contact': '/api/contact',
                 'portfolio': '/api/portfolio',
+                'upload': '/api/upload',
                 'health': '/api/health',
                 'docs': '/api/docs'
             },

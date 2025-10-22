@@ -28,17 +28,25 @@ import {
   IconHeart,
   IconArticle,
   IconArrowLeft,
+  IconChevronLeft,
+  IconChevronRight,
 } from "@tabler/icons-react";
-import { useBlogPosts, useBlogPost } from "../../hooks/useApi";
+import { useBlogPosts, useBlogPost, useLikeBlogPost } from "../../hooks/useApi";
+import { useNavigate } from "react-router-dom";
 
 const BlogPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPost, setSelectedPost] = useState<any>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
 
   const { data: postsData, isLoading } = useBlogPosts({
     status: "published",
     per_page: 12,
+    page: currentPage,
   });
+
+  const likePost = useLikeBlogPost();
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A";
@@ -157,7 +165,7 @@ const BlogPage: React.FC = () => {
                   {/* Read More Button */}
                   <Button
                     variant="light"
-                    onClick={() => setSelectedPost(post)}
+                    onClick={() => navigate(`/blog/${post.slug}`)}
                     fullWidth
                   >
                     Read More
@@ -166,6 +174,31 @@ const BlogPage: React.FC = () => {
               </Card>
             ))}
           </SimpleGrid>
+        )}
+
+        {/* Pagination */}
+        {postsData?.pagination && postsData.pagination.pages > 1 && (
+          <Group justify="center" mt="xl">
+            <Button
+              variant="outline"
+              leftSection={<IconChevronLeft size={16} />}
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <Text size="sm" c="dimmed">
+              Page {currentPage} of {postsData.pagination.pages}
+            </Text>
+            <Button
+              variant="outline"
+              rightSection={<IconChevronRight size={16} />}
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage === postsData.pagination.pages}
+            >
+              Next
+            </Button>
+          </Group>
         )}
 
         {/* Blog Post Modal */}
@@ -217,12 +250,21 @@ const BlogPage: React.FC = () => {
                 <Button
                   variant="outline"
                   leftSection={<IconHeart size={16} />}
-                  onClick={() => {
-                    // TODO: Implement like functionality
-                    alert("Like functionality coming soon!");
+                  onClick={async () => {
+                    try {
+                      await likePost.mutateAsync(selectedPost.id);
+                      // Update the post's like count locally
+                      setSelectedPost({
+                        ...selectedPost,
+                        likes_count: (selectedPost.likes_count || 0) + 1,
+                      });
+                    } catch (error) {
+                      console.error("Failed to like post:", error);
+                    }
                   }}
+                  loading={likePost.isPending}
                 >
-                  Like Post
+                  Like Post ({selectedPost.likes_count || 0})
                 </Button>
                 <Button
                   variant="outline"

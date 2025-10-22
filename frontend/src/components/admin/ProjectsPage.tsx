@@ -43,6 +43,7 @@ import {
   useUpdateProject,
   useDeleteProject,
 } from "../../hooks/useApi";
+import FileUpload from "../ui/FileUpload";
 
 interface ProjectFormData {
   title: string;
@@ -493,6 +494,24 @@ const ProjectsPage: React.FC = () => {
                   />
                 </Grid.Col>
               </Grid>
+
+              <FileUpload
+                type="image"
+                label="Or Upload Featured Image"
+                description="Upload an image file for the project featured image"
+                onUploadSuccess={(fileUrl) => {
+                  form.setFieldValue("featured_image", fileUrl);
+                }}
+                onUploadError={(error) => {
+                  notifications.show({
+                    title: "Upload Error",
+                    message: error,
+                    color: "red",
+                  });
+                }}
+                maxSize={5 * 1024 * 1024} // 5MB for images
+                accept="image/*"
+              />
 
               <Grid>
                 <Grid.Col span={6}>

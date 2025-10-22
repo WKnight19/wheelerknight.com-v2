@@ -15,6 +15,9 @@ import {
   Box,
   rem,
   Container,
+  SimpleGrid,
+  ThemeIcon,
+  Divider,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -25,6 +28,11 @@ import {
   IconSun,
   IconMoon,
   IconUser,
+  IconBrandGithub,
+  IconBrandLinkedin,
+  IconMapPin,
+  IconPhone,
+  IconFileText,
 } from "@tabler/icons-react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 
@@ -36,6 +44,8 @@ const PublicLayout: React.FC = () => {
 
   const navItems = [
     { label: "Home", path: "/", icon: IconHome },
+    { label: "About", path: "/about", icon: IconUser },
+    { label: "Resume", path: "/resume", icon: IconFileText },
     { label: "Projects", path: "/projects", icon: IconCode },
     { label: "Blog", path: "/blog", icon: IconArticle },
     { label: "Contact", path: "/contact", icon: IconMail },
@@ -230,6 +240,109 @@ const PublicLayout: React.FC = () => {
       <AppShell.Main>
         <Outlet />
       </AppShell.Main>
+
+      {/* Footer */}
+      <AppShell.Footer p="md">
+        <Container size="xl">
+          <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="lg">
+            {/* Brand */}
+            <Box>
+              <Group gap="sm" mb="sm">
+                <Avatar
+                  src="https://api.dicebear.com/7.x/initials/svg?seed=WK&backgroundColor=dc143c&textColor=ffffff"
+                  size="sm"
+                  radius="sm"
+                />
+                <Text fw={700} c="crimson">
+                  Wheeler Knight
+                </Text>
+              </Group>
+              <Text size="sm" c="dimmed" mb="sm">
+                Management Information Systems Student | Computer Science Minor
+              </Text>
+              <Text size="sm" c="dimmed">
+                University of Alabama | Class of 2026
+              </Text>
+            </Box>
+
+            {/* Quick Links */}
+            <Box>
+              <Text fw={500} mb="sm">
+                Quick Links
+              </Text>
+              <Stack gap="xs">
+                <Anchor href="/about" size="sm">
+                  About Me
+                </Anchor>
+                <Anchor href="/resume" size="sm">
+                  Resume
+                </Anchor>
+                <Anchor href="/projects" size="sm">
+                  Projects
+                </Anchor>
+                <Anchor href="/blog" size="sm">
+                  Blog
+                </Anchor>
+                <Anchor href="/contact" size="sm">
+                  Contact
+                </Anchor>
+              </Stack>
+            </Box>
+
+            {/* Contact Info */}
+            <Box>
+              <Text fw={500} mb="sm">
+                Get In Touch
+              </Text>
+              <Stack gap="xs">
+                <Group gap="xs">
+                  <IconMail size={14} color="gray" />
+                  <Anchor href="mailto:wheeler@wheelerknight.com" size="sm">
+                    wheeler@wheelerknight.com
+                  </Anchor>
+                </Group>
+                <Group gap="xs">
+                  <IconPhone size={14} color="gray" />
+                  <Text size="sm">(256) 555-0123</Text>
+                </Group>
+                <Group gap="xs">
+                  <IconMapPin size={14} color="gray" />
+                  <Text size="sm">Moulton, Alabama</Text>
+                </Group>
+                <Group gap="md" mt="sm">
+                  <Anchor
+                    href="https://linkedin.com/in/wheelerknight"
+                    target="_blank"
+                  >
+                    <ThemeIcon color="blue" variant="light" size="sm">
+                      <IconBrandLinkedin size={16} />
+                    </ThemeIcon>
+                  </Anchor>
+                  <Anchor
+                    href="https://github.com/wheelerknight"
+                    target="_blank"
+                  >
+                    <ThemeIcon color="gray" variant="light" size="sm">
+                      <IconBrandGithub size={16} />
+                    </ThemeIcon>
+                  </Anchor>
+                </Group>
+              </Stack>
+            </Box>
+          </SimpleGrid>
+
+          <Divider my="md" />
+
+          <Group justify="space-between">
+            <Text size="sm" c="dimmed">
+              © 2024 Wheeler Knight. All rights reserved.
+            </Text>
+            <Text size="sm" c="dimmed">
+              Built with React & Mantine UI
+            </Text>
+          </Group>
+        </Container>
+      </AppShell.Footer>
     </AppShell>
   );
 };

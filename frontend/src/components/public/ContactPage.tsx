@@ -1,5 +1,5 @@
 // Public Contact Page for Wheeler Knight Portfolio
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Container,
   Title,
@@ -16,7 +16,7 @@ import {
   SimpleGrid,
   Alert,
   Anchor,
-} from '@mantine/core';
+} from "@mantine/core";
 import {
   IconMail,
   IconPhone,
@@ -25,9 +25,10 @@ import {
   IconBrandGithub,
   IconSend,
   IconCheck,
-} from '@tabler/icons-react';
-import { useForm } from '@mantine/form';
-import { notifications } from '@mantine/notifications';
+} from "@tabler/icons-react";
+import { useForm } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
+import { useSubmitMessage, useContactInfo } from "../../hooks/useApi";
 
 interface ContactFormData {
   name: string;
@@ -40,43 +41,53 @@ interface ContactFormData {
 
 const ContactPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitMessage = useSubmitMessage();
+  const { data: contactInfo } = useContactInfo();
 
   const form = useForm<ContactFormData>({
     initialValues: {
-      name: '',
-      email: '',
-      company: '',
-      phone: '',
-      subject: '',
-      message: '',
+      name: "",
+      email: "",
+      company: "",
+      phone: "",
+      subject: "",
+      message: "",
     },
     validate: {
-      name: (value) => (!value ? 'Name is required' : null),
-      email: (value) => (!/^\S+@\S+$/.test(value) ? 'Invalid email' : null),
-      subject: (value) => (!value ? 'Subject is required' : null),
-      message: (value) => (!value ? 'Message is required' : null),
+      name: (value) => (!value ? "Name is required" : null),
+      email: (value) => (!/^\S+@\S+$/.test(value) ? "Invalid email" : null),
+      subject: (value) => (!value ? "Subject is required" : null),
+      message: (value) => (!value ? "Message is required" : null),
     },
   });
 
   const handleSubmit = async (values: ContactFormData) => {
     setIsSubmitting(true);
     try {
-      // TODO: Implement actual contact form submission
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-      
+      await submitMessage.mutateAsync({
+        name: values.name,
+        email: values.email,
+        company: values.company,
+        phone: values.phone,
+        subject: values.subject,
+        message: values.message,
+      });
+
       notifications.show({
-        title: 'Message Sent!',
-        message: 'Thank you for reaching out. I\'ll get back to you soon!',
-        color: 'green',
+        title: "Message Sent!",
+        message: "Thank you for reaching out. I'll get back to you soon!",
+        color: "green",
         icon: <IconCheck size={16} />,
       });
-      
+
       form.reset();
-    } catch (error) {
+    } catch (error: any) {
       notifications.show({
-        title: 'Error',
-        message: 'Failed to send message. Please try again.',
-        color: 'red',
+        title: "Error",
+        message:
+          error?.response?.data?.error ||
+          "Failed to send message. Please try again.",
+        color: "red",
       });
     } finally {
       setIsSubmitting(false);
@@ -92,7 +103,8 @@ const ContactPage: React.FC = () => {
             Get In Touch
           </Title>
           <Text size="lg" c="dimmed" maw={600}>
-            I'm always interested in new opportunities, collaborations, and conversations about technology.
+            I'm always interested in new opportunities, collaborations, and
+            conversations about technology.
           </Text>
         </Stack>
 
@@ -105,8 +117,8 @@ const ContactPage: React.FC = () => {
                   Send Me a Message
                 </Title>
                 <Text c="dimmed">
-                  Have a project in mind? Want to collaborate? Or just want to chat about technology? 
-                  I'd love to hear from you!
+                  Have a project in mind? Want to collaborate? Or just want to
+                  chat about technology? I'd love to hear from you!
                 </Text>
 
                 <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -117,7 +129,7 @@ const ContactPage: React.FC = () => {
                           label="Name"
                           placeholder="Your full name"
                           required
-                          {...form.getInputProps('name')}
+                          {...form.getInputProps("name")}
                         />
                       </Grid.Col>
                       <Grid.Col span={6}>
@@ -125,7 +137,7 @@ const ContactPage: React.FC = () => {
                           label="Email"
                           placeholder="your.email@example.com"
                           required
-                          {...form.getInputProps('email')}
+                          {...form.getInputProps("email")}
                         />
                       </Grid.Col>
                     </Grid>
@@ -135,14 +147,14 @@ const ContactPage: React.FC = () => {
                         <TextInput
                           label="Company (Optional)"
                           placeholder="Your company name"
-                          {...form.getInputProps('company')}
+                          {...form.getInputProps("company")}
                         />
                       </Grid.Col>
                       <Grid.Col span={6}>
                         <TextInput
                           label="Phone (Optional)"
                           placeholder="Your phone number"
-                          {...form.getInputProps('phone')}
+                          {...form.getInputProps("phone")}
                         />
                       </Grid.Col>
                     </Grid>
@@ -151,7 +163,7 @@ const ContactPage: React.FC = () => {
                       label="Subject"
                       placeholder="What's this about?"
                       required
-                      {...form.getInputProps('subject')}
+                      {...form.getInputProps("subject")}
                     />
 
                     <Textarea
@@ -159,7 +171,7 @@ const ContactPage: React.FC = () => {
                       placeholder="Tell me about your project, idea, or just say hello!"
                       rows={6}
                       required
-                      {...form.getInputProps('message')}
+                      {...form.getInputProps("message")}
                     />
 
                     <Button
@@ -184,15 +196,20 @@ const ContactPage: React.FC = () => {
                   <Title order={3} c="crimson">
                     Contact Information
                   </Title>
-                  
+
                   <Group gap="md">
                     <ThemeIcon color="crimson" variant="light" size="lg">
                       <IconMail size={20} />
                     </ThemeIcon>
                     <div>
                       <Text fw={500}>Email</Text>
-                      <Anchor href="mailto:wheeler@example.com" size="sm">
-                        wheeler@example.com
+                      <Anchor
+                        href={`mailto:${
+                          contactInfo?.email || "wheeler@wheelerknight.com"
+                        }`}
+                        size="sm"
+                      >
+                        {contactInfo?.email || "wheeler@wheelerknight.com"}
                       </Anchor>
                     </div>
                   </Group>
@@ -204,7 +221,7 @@ const ContactPage: React.FC = () => {
                     <div>
                       <Text fw={500}>Phone</Text>
                       <Text size="sm" c="dimmed">
-                        (256) 555-0123
+                        {contactInfo?.phone || "(256) 555-0123"}
                       </Text>
                     </div>
                   </Group>
@@ -216,7 +233,7 @@ const ContactPage: React.FC = () => {
                     <div>
                       <Text fw={500}>Location</Text>
                       <Text size="sm" c="dimmed">
-                        Moulton, Alabama
+                        {contactInfo?.location || "Moulton, Alabama"}
                       </Text>
                     </div>
                   </Group>
@@ -228,15 +245,23 @@ const ContactPage: React.FC = () => {
                   <Title order={3} c="crimson">
                     Connect With Me
                   </Title>
-                  
+
                   <Group gap="md">
                     <ThemeIcon color="blue" variant="light" size="lg">
                       <IconBrandLinkedin size={20} />
                     </ThemeIcon>
                     <div>
                       <Text fw={500}>LinkedIn</Text>
-                      <Anchor href="https://linkedin.com/in/wheelerknight" target="_blank" size="sm">
-                        linkedin.com/in/wheelerknight
+                      <Anchor
+                        href={
+                          contactInfo?.linkedin_url ||
+                          "https://linkedin.com/in/wheelerknight"
+                        }
+                        target="_blank"
+                        size="sm"
+                      >
+                        {contactInfo?.linkedin_url ||
+                          "linkedin.com/in/wheelerknight"}
                       </Anchor>
                     </div>
                   </Group>
@@ -247,8 +272,15 @@ const ContactPage: React.FC = () => {
                     </ThemeIcon>
                     <div>
                       <Text fw={500}>GitHub</Text>
-                      <Anchor href="https://github.com/wheelerknight" target="_blank" size="sm">
-                        github.com/wheelerknight
+                      <Anchor
+                        href={
+                          contactInfo?.github_url ||
+                          "https://github.com/wheelerknight"
+                        }
+                        target="_blank"
+                        size="sm"
+                      >
+                        {contactInfo?.github_url || "github.com/wheelerknight"}
                       </Anchor>
                     </div>
                   </Group>
@@ -260,23 +292,39 @@ const ContactPage: React.FC = () => {
                   <Title order={3} c="crimson">
                     Quick Facts
                   </Title>
-                  
+
                   <SimpleGrid cols={1} spacing="sm">
                     <Paper p="sm" withBorder>
-                      <Text size="sm" fw={500}>University</Text>
-                      <Text size="sm" c="dimmed">University of Alabama</Text>
+                      <Text size="sm" fw={500}>
+                        University
+                      </Text>
+                      <Text size="sm" c="dimmed">
+                        University of Alabama
+                      </Text>
                     </Paper>
                     <Paper p="sm" withBorder>
-                      <Text size="sm" fw={500}>Major</Text>
-                      <Text size="sm" c="dimmed">Management Information Systems</Text>
+                      <Text size="sm" fw={500}>
+                        Major
+                      </Text>
+                      <Text size="sm" c="dimmed">
+                        Management Information Systems
+                      </Text>
                     </Paper>
                     <Paper p="sm" withBorder>
-                      <Text size="sm" fw={500}>Minor</Text>
-                      <Text size="sm" c="dimmed">Computer Science</Text>
+                      <Text size="sm" fw={500}>
+                        Minor
+                      </Text>
+                      <Text size="sm" c="dimmed">
+                        Computer Science
+                      </Text>
                     </Paper>
                     <Paper p="sm" withBorder>
-                      <Text size="sm" fw={500}>Graduation</Text>
-                      <Text size="sm" c="dimmed">May 2026</Text>
+                      <Text size="sm" fw={500}>
+                        Graduation
+                      </Text>
+                      <Text size="sm" c="dimmed">
+                        May 2026
+                      </Text>
                     </Paper>
                   </SimpleGrid>
                 </Stack>
@@ -288,8 +336,9 @@ const ContactPage: React.FC = () => {
         {/* Response Time */}
         <Alert color="blue" icon={<IconMail size={16} />}>
           <Text size="sm">
-            <strong>Response Time:</strong> I typically respond to messages within 24 hours. 
-            For urgent matters, feel free to call or text me directly.
+            <strong>Response Time:</strong> I typically respond to messages
+            within 24 hours. For urgent matters, feel free to call or text me
+            directly.
           </Text>
         </Alert>
       </Stack>

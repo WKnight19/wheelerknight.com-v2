@@ -41,6 +41,7 @@ import {
   useUpdateBlogPost,
   useDeleteBlogPost,
 } from "../../hooks/useApi";
+import FileUpload from "../ui/FileUpload";
 
 interface BlogPostFormData {
   title: string;
@@ -407,6 +408,24 @@ const BlogPage: React.FC = () => {
                 label="Featured Image URL"
                 placeholder="https://example.com/image.jpg"
                 {...form.getInputProps("featured_image")}
+              />
+
+              <FileUpload
+                type="image"
+                label="Or Upload Featured Image"
+                description="Upload an image file for the featured image"
+                onUploadSuccess={(fileUrl) => {
+                  form.setFieldValue("featured_image", fileUrl);
+                }}
+                onUploadError={(error) => {
+                  notifications.show({
+                    title: "Upload Error",
+                    message: error,
+                    color: "red",
+                  });
+                }}
+                maxSize={5 * 1024 * 1024} // 5MB for images
+                accept="image/*"
               />
 
               <Textarea

@@ -14,20 +14,72 @@ import { QueryProvider } from "./providers/QueryProvider";
 import LoginPage from "./components/auth/LoginPage";
 import AdminLayout from "./components/admin/AdminLayout";
 import DashboardPage from "./components/admin/DashboardPage";
+import SkillsPage from "./components/admin/SkillsPage";
+import ProjectsPage from "./components/admin/ProjectsPage";
+import BlogPage from "./components/admin/BlogPage";
+import MessagesPage from "./components/admin/MessagesPage";
+import EducationPage from "./components/admin/EducationPage";
+import WorkExperiencePage from "./components/admin/WorkExperiencePage";
+import InterestsPage from "./components/admin/InterestsPage";
 import PublicLayout from "./components/public/PublicLayout";
 import HomePage from "./components/public/HomePage";
-import ProjectsPage from "./components/public/ProjectsPage";
-import BlogPage from "./components/public/BlogPage";
+import PublicProjectsPage from "./components/public/ProjectsPage";
+import PublicBlogPage from "./components/public/BlogPage";
+import AboutPage from "./components/public/AboutPage";
+import ResumePage from "./components/public/ResumePage";
+import BlogPostPage from "./components/public/BlogPostPage";
 import ContactPage from "./components/public/ContactPage";
 import NotFoundPage from "./components/public/NotFoundPage";
 import { withAuth } from "./contexts/AuthContext";
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 
-// Protected Dashboard Component
+// Protected Admin Components
 const ProtectedDashboard = withAuth(() => (
   <AdminLayout>
     <DashboardPage />
+  </AdminLayout>
+));
+
+const ProtectedSkills = withAuth(() => (
+  <AdminLayout>
+    <SkillsPage />
+  </AdminLayout>
+));
+
+const ProtectedProjects = withAuth(() => (
+  <AdminLayout>
+    <ProjectsPage />
+  </AdminLayout>
+));
+
+const ProtectedBlog = withAuth(() => (
+  <AdminLayout>
+    <BlogPage />
+  </AdminLayout>
+));
+
+const ProtectedMessages = withAuth(() => (
+  <AdminLayout>
+    <MessagesPage />
+  </AdminLayout>
+));
+
+const ProtectedEducation = withAuth(() => (
+  <AdminLayout>
+    <EducationPage />
+  </AdminLayout>
+));
+
+const ProtectedWorkExperience = withAuth(() => (
+  <AdminLayout>
+    <WorkExperiencePage />
+  </AdminLayout>
+));
+
+const ProtectedInterests = withAuth(() => (
+  <AdminLayout>
+    <InterestsPage />
   </AdminLayout>
 ));
 
@@ -43,8 +95,11 @@ function App() {
                 {/* Public Routes */}
                 <Route path="/" element={<PublicLayout />}>
                   <Route index element={<HomePage />} />
-                  <Route path="projects" element={<ProjectsPage />} />
-                  <Route path="blog" element={<BlogPage />} />
+                  <Route path="about" element={<AboutPage />} />
+                  <Route path="resume" element={<ResumePage />} />
+                  <Route path="projects" element={<PublicProjectsPage />} />
+                  <Route path="blog" element={<PublicBlogPage />} />
+                  <Route path="blog/:slug" element={<BlogPostPage />} />
                   <Route path="contact" element={<ContactPage />} />
                 </Route>
 
@@ -55,14 +110,23 @@ function App() {
                 <Route path="/admin" element={<ProtectedDashboard />}>
                   <Route index element={<DashboardPage />} />
                   <Route path="dashboard" element={<DashboardPage />} />
-                  <Route path="skills" element={<DashboardPage />} />
-                  <Route path="projects" element={<DashboardPage />} />
-                  <Route path="blog" element={<DashboardPage />} />
-                  <Route path="messages" element={<DashboardPage />} />
-                  <Route path="education" element={<DashboardPage />} />
-                  <Route path="experience" element={<DashboardPage />} />
-                  <Route path="interests" element={<DashboardPage />} />
                 </Route>
+                <Route path="/admin/skills" element={<ProtectedSkills />} />
+                <Route path="/admin/projects" element={<ProtectedProjects />} />
+                <Route path="/admin/blog" element={<ProtectedBlog />} />
+                <Route path="/admin/messages" element={<ProtectedMessages />} />
+                <Route
+                  path="/admin/education"
+                  element={<ProtectedEducation />}
+                />
+                <Route
+                  path="/admin/experience"
+                  element={<ProtectedWorkExperience />}
+                />
+                <Route
+                  path="/admin/interests"
+                  element={<ProtectedInterests />}
+                />
 
                 {/* 404 Route */}
                 <Route path="*" element={<NotFoundPage />} />
