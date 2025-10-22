@@ -4,6 +4,7 @@ from models import db
 from models.models import BlogPost
 from models.blog_post import PostStatus
 from routes import create_api_blueprint, handle_api_response, validate_required_fields, paginate_query, format_pagination_response
+from auth import admin_required
 from error_handling import ValidationError, NotFoundError
 import logging
 from datetime import datetime
@@ -92,7 +93,8 @@ def get_post_statuses():
 
 @blog_bp.route('/', methods=['POST'])
 @handle_api_response
-def create_blog_post():
+@admin_required
+def create_blog_post(current_user):
     """Create a new blog post (Admin only)"""
     data = request.get_json()
     
@@ -130,7 +132,8 @@ def create_blog_post():
 
 @blog_bp.route('/<int:post_id>', methods=['PUT'])
 @handle_api_response
-def update_blog_post(post_id):
+@admin_required
+def update_blog_post(post_id, current_user):
     """Update a blog post (Admin only)"""
     post = BlogPost.query.get_or_404(post_id)
     data = request.get_json()
@@ -175,7 +178,8 @@ def update_blog_post(post_id):
 
 @blog_bp.route('/<int:post_id>', methods=['DELETE'])
 @handle_api_response
-def delete_blog_post(post_id):
+@admin_required
+def delete_blog_post(post_id, current_user):
     """Delete a blog post (Admin only)"""
     post = BlogPost.query.get_or_404(post_id)
     
@@ -204,7 +208,8 @@ def like_blog_post(post_id):
 
 @blog_bp.route('/stats', methods=['GET'])
 @handle_api_response
-def get_blog_stats():
+@admin_required
+def get_blog_stats(current_user):
     """Get blog statistics"""
     total_posts = BlogPost.query.count()
     published_posts = BlogPost.query.filter(BlogPost.status == PostStatus.PUBLISHED).count()

@@ -4,6 +4,7 @@ from models import db
 from models.models import Message, Analytics
 from models.message import MessageStatus
 from routes import create_api_blueprint, handle_api_response, validate_required_fields, paginate_query, format_pagination_response
+from auth import admin_required
 from error_handling import ValidationError, NotFoundError
 import logging
 from datetime import datetime
@@ -15,7 +16,8 @@ contact_bp = create_api_blueprint('contact', 'contact')
 
 @contact_bp.route('/messages', methods=['GET'])
 @handle_api_response
-def get_messages():
+@admin_required
+def get_messages(current_user):
     """Get all messages with optional filtering and pagination (Admin only)"""
     try:
         # Get query parameters
@@ -48,7 +50,8 @@ def get_messages():
 
 @contact_bp.route('/messages/<int:message_id>', methods=['GET'])
 @handle_api_response
-def get_message(message_id):
+@admin_required
+def get_message(message_id, current_user):
     """Get a specific message by ID (Admin only)"""
     message = Message.query.get_or_404(message_id)
     
@@ -109,7 +112,8 @@ def create_message():
 
 @contact_bp.route('/messages/<int:message_id>', methods=['PUT'])
 @handle_api_response
-def update_message(message_id):
+@admin_required
+def update_message(message_id, current_user):
     """Update a message status (Admin only)"""
     message = Message.query.get_or_404(message_id)
     data = request.get_json()
@@ -138,7 +142,8 @@ def update_message(message_id):
 
 @contact_bp.route('/messages/<int:message_id>', methods=['DELETE'])
 @handle_api_response
-def delete_message(message_id):
+@admin_required
+def delete_message(message_id, current_user):
     """Delete a message (Admin only)"""
     message = Message.query.get_or_404(message_id)
     
@@ -150,7 +155,8 @@ def delete_message(message_id):
 
 @contact_bp.route('/messages/<int:message_id>/reply', methods=['POST'])
 @handle_api_response
-def reply_to_message(message_id):
+@admin_required
+def reply_to_message(message_id, current_user):
     """Mark message as replied and send response (Admin only)"""
     message = Message.query.get_or_404(message_id)
     data = request.get_json()
@@ -173,7 +179,8 @@ def reply_to_message(message_id):
 
 @contact_bp.route('/stats', methods=['GET'])
 @handle_api_response
-def get_contact_stats():
+@admin_required
+def get_contact_stats(current_user):
     """Get contact form statistics (Admin only)"""
     total_messages = Message.query.count()
     new_messages = Message.query.filter(Message.status == MessageStatus.NEW).count()

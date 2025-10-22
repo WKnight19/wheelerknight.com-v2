@@ -4,6 +4,7 @@ from models import db
 from models.models import Skill
 from models.skill import SkillCategory
 from routes import create_api_blueprint, handle_api_response, validate_required_fields, paginate_query, format_pagination_response
+from auth import admin_required
 from error_handling import ValidationError, NotFoundError
 import logging
 
@@ -72,7 +73,8 @@ def get_skill_categories():
 
 @skills_bp.route('/', methods=['POST'])
 @handle_api_response
-def create_skill():
+@admin_required
+def create_skill(current_user):
     """Create a new skill (Admin only)"""
     data = request.get_json()
     
@@ -110,7 +112,8 @@ def create_skill():
 
 @skills_bp.route('/<int:skill_id>', methods=['PUT'])
 @handle_api_response
-def update_skill(skill_id):
+@admin_required
+def update_skill(skill_id, current_user):
     """Update a skill (Admin only)"""
     skill = Skill.query.get_or_404(skill_id)
     data = request.get_json()
@@ -150,7 +153,8 @@ def update_skill(skill_id):
 
 @skills_bp.route('/<int:skill_id>', methods=['DELETE'])
 @handle_api_response
-def delete_skill(skill_id):
+@admin_required
+def delete_skill(skill_id, current_user):
     """Delete a skill (Admin only)"""
     skill = Skill.query.get_or_404(skill_id)
     
@@ -162,7 +166,8 @@ def delete_skill(skill_id):
 
 @skills_bp.route('/stats', methods=['GET'])
 @handle_api_response
-def get_skills_stats():
+@admin_required
+def get_skills_stats(current_user):
     """Get skills statistics"""
     total_skills = Skill.query.count()
     featured_skills = Skill.query.filter(Skill.is_featured == True).count()

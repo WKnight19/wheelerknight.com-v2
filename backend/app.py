@@ -51,8 +51,11 @@ app.config['MAIL_PASSWORD'] = app_config.EMAIL_PASSWORD
 from models import db
 db.init_app(app)
 migrate = Migrate(app, db)
-jwt = JWTManager(app)
 mail = Mail(app)
+
+# Initialize authentication
+from auth import auth_manager
+auth_manager.init_app(app)
 
 # Configure CORS
 CORS(app, origins=app_config.CORS_ORIGINS)

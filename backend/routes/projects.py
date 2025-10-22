@@ -4,6 +4,7 @@ from models import db
 from models.models import Project
 from models.project import ProjectStatus
 from routes import create_api_blueprint, handle_api_response, validate_required_fields, paginate_query, format_pagination_response
+from auth import admin_required
 from error_handling import ValidationError, NotFoundError
 import logging
 from datetime import date
@@ -73,7 +74,8 @@ def get_project_statuses():
 
 @projects_bp.route('/', methods=['POST'])
 @handle_api_response
-def create_project():
+@admin_required
+def create_project(current_user):
     """Create a new project (Admin only)"""
     data = request.get_json()
     
@@ -129,7 +131,8 @@ def create_project():
 
 @projects_bp.route('/<int:project_id>', methods=['PUT'])
 @handle_api_response
-def update_project(project_id):
+@admin_required
+def update_project(project_id, current_user):
     """Update a project (Admin only)"""
     project = Project.query.get_or_404(project_id)
     data = request.get_json()
@@ -196,7 +199,8 @@ def update_project(project_id):
 
 @projects_bp.route('/<int:project_id>', methods=['DELETE'])
 @handle_api_response
-def delete_project(project_id):
+@admin_required
+def delete_project(project_id, current_user):
     """Delete a project (Admin only)"""
     project = Project.query.get_or_404(project_id)
     
@@ -208,7 +212,8 @@ def delete_project(project_id):
 
 @projects_bp.route('/stats', methods=['GET'])
 @handle_api_response
-def get_projects_stats():
+@admin_required
+def get_projects_stats(current_user):
     """Get projects statistics"""
     total_projects = Project.query.count()
     featured_projects = Project.query.filter(Project.is_featured == True).count()

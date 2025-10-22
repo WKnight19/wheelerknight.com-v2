@@ -7,11 +7,13 @@ from routes.projects import projects_bp
 from routes.blog import blog_bp
 from routes.contact import contact_bp
 from routes.portfolio import portfolio_bp
+from routes.auth import auth_bp
 
 def register_blueprints(app: Flask):
     """Register all API blueprints with the Flask app"""
     
     # Register blueprints
+    app.register_blueprint(auth_bp)
     app.register_blueprint(skills_bp)
     app.register_blueprint(projects_bp)
     app.register_blueprint(blog_bp)
@@ -27,6 +29,7 @@ def register_blueprints(app: Flask):
             'version': '2.0',
             'description': 'API for Wheeler Knight\'s personal portfolio website',
             'endpoints': {
+                'auth': '/api/auth',
                 'skills': '/api/skills',
                 'projects': '/api/projects',
                 'blog': '/api/blog',
@@ -40,6 +43,7 @@ def register_blueprints(app: Flask):
 
 # Export blueprints for easy access
 __all__ = [
+    'auth_bp',
     'skills_bp',
     'projects_bp', 
     'blog_bp',

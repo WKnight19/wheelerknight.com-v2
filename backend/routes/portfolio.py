@@ -4,6 +4,7 @@ from models import db
 from models.models import Education, WorkExperience, Interest
 from models.interest import InterestCategory
 from routes import create_api_blueprint, handle_api_response, validate_required_fields, paginate_query, format_pagination_response
+from auth import admin_required
 from error_handling import ValidationError, NotFoundError
 import logging
 from datetime import date
@@ -30,7 +31,8 @@ def get_education_record(edu_id):
 
 @portfolio_bp.route('/education', methods=['POST'])
 @handle_api_response
-def create_education():
+@admin_required
+def create_education(current_user):
     """Create a new education record (Admin only)"""
     data = request.get_json()
     
@@ -70,7 +72,8 @@ def create_education():
 
 @portfolio_bp.route('/education/<int:edu_id>', methods=['PUT'])
 @handle_api_response
-def update_education(edu_id):
+@admin_required
+def update_education(edu_id, current_user):
     """Update an education record (Admin only)"""
     education = Education.query.get_or_404(edu_id)
     data = request.get_json()
@@ -136,7 +139,8 @@ def get_work_experience_record(exp_id):
 
 @portfolio_bp.route('/experience', methods=['POST'])
 @handle_api_response
-def create_work_experience():
+@admin_required
+def create_work_experience(current_user):
     """Create a new work experience record (Admin only)"""
     data = request.get_json()
     
@@ -176,7 +180,8 @@ def create_work_experience():
 
 @portfolio_bp.route('/experience/<int:exp_id>', methods=['PUT'])
 @handle_api_response
-def update_work_experience(exp_id):
+@admin_required
+def update_work_experience(exp_id, current_user):
     """Update a work experience record (Admin only)"""
     experience = WorkExperience.query.get_or_404(exp_id)
     data = request.get_json()
@@ -257,7 +262,8 @@ def get_interest(interest_id):
 
 @portfolio_bp.route('/interests', methods=['POST'])
 @handle_api_response
-def create_interest():
+@admin_required
+def create_interest(current_user):
     """Create a new interest (Admin only)"""
     data = request.get_json()
     
@@ -286,7 +292,8 @@ def create_interest():
 
 @portfolio_bp.route('/interests/<int:interest_id>', methods=['PUT'])
 @handle_api_response
-def update_interest(interest_id):
+@admin_required
+def update_interest(interest_id, current_user):
     """Update an interest (Admin only)"""
     interest = Interest.query.get_or_404(interest_id)
     data = request.get_json()
